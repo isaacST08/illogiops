@@ -187,8 +187,11 @@ in
 
         formatOptionValue = v:
           if builtins.isList v
-          then ''[ ${lib.strings.concatMapStringsSep ", " (x: ''"${toString x}"'') v} ]''
-          else ''${toString v};'';
+          # then ''[ ${lib.strings.concatMapStringsSep ", " (x: ''"${toString x}"'') v} ]''
+          then ''[ ${lib.strings.concatMapStringsSep ", " formatOptionValue v} ]''
+          else if builtins.isString v
+          then ''"${v}"''
+          else ''${toString v}'';
 
         fmtInheritancePackage = {
           inherit

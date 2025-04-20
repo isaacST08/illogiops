@@ -12,7 +12,7 @@
   mkActionOption = import ./../mkActionOption;
 in
   {name, ...}: let
-    cid = name; # The name of the calling attrset is the key cid for the button.
+    cid = name; # The name of the calling attrset is the cid for the button.
     actionConfig = buttonsConfig."${cid}".action;
   in {
     options = {
