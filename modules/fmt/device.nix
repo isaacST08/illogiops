@@ -2,11 +2,11 @@
   lib,
   fmtObjectAttrs,
   ...
-}: deviceConfig: let
+} @ attrs: deviceConfig: let
   inherit (builtins) toString;
   inherit (lib.trivial) boolToString;
 
-  buttonFmt = import ./button.nix {inherit lib;};
+  buttonFmt = import ./button.nix attrs;
 in ''
   {
     name: "${deviceConfig.name}";
@@ -27,5 +27,4 @@ in ''
     buttons: (
       ${fmtObjectAttrs buttonFmt deviceConfig.buttons 4}
     );
-  }
-''
+  }''

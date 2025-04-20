@@ -1,4 +1,4 @@
-{
+{specialArgs}: {
   config,
   lib,
   pkgs,
@@ -177,12 +177,34 @@ in
           concatStringsSep ",\n" (map fmtFunction (builtins.attrValues objectsConfig))
         ));
         # ${indent 2 (concatStringsSep ",\n" (map deviceFmt (builtins.attrValues cfg.devices)))}
+        capitalize = s: let
+          firstLetter = lib.strings.concatStrings (lib.lists.take 1 (lib.strings.stringToCharacters s));
+          remainingLetters = lib.strings.concatStrings (lib.lists.drop 1 (lib.strings.stringToCharacters s));
+        in
+          (lib.strings.toUpper firstLetter) + remainingLetters;
 
-        deviceFmt = import ./fmt/device.nix {inherit lib fmtObjectAttrs;};
+        capitalizeProper = s: capitalize (lib.strings.toLower s);
+
+        formatOptionValue = v:
+          if builtins.isList v
+          then ''[ ${lib.strings.concatMapStringsSep ", " (x: ''"${toString x}"'') v} ]''
+          else ''${toString v};'';
+
+        fmtInheritancePackage = {
+          inherit
+            lib
+            indent
+            fmtObjectAttrs
+            capitalize
+            capitalizeProper
+            formatOptionValue
+            ;
+        };
+
+        deviceFmt = import ./fmt/device.nix fmtInheritancePackage;
       in ''
         devices: (
           ${fmtObjectAttrs deviceFmt cfg.devices 2}
-        );
-      '';
+        );'';
     };
   }
