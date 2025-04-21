@@ -6,17 +6,15 @@
     systems.url = "github:nix-systems/default";
   };
 
-  outputs = {self, ...} @ inputs:
-  #   let
-  #   # illogiopsLib = import ./illogiopsLib {
-  #   #   inherit (inputs.nixpkgs) lib;
-  #   # };
-  # in
-  {
+  outputs = {self, ...} @ inputs: let
+    illogiopsLib = import ./lib {
+      inherit (inputs.nixpkgs) lib;
+    };
+  in {
     nixosModules = {
       illogiops = import ./modules {
         specialArgs = {
-          # inherit illogiopsLib;
+          inherit illogiopsLib;
         };
       };
       default = self.nixosModules.illogiops;

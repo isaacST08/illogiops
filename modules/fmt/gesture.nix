@@ -1,10 +1,6 @@
-{
-  lib,
-  capitalize,
-  capitalizeProper,
-  indent,
-  ...
-} @ attrs: gestureConfig: let
+{illogiopsLib, ...} @ attrs: gestureConfig: let
+  inherit (illogiopsLib.strings) indent capitalize capitalizeProper;
+
   fmtAction = import ./action.nix attrs gestureConfig.action;
 in ''
   {

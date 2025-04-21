@@ -1,10 +1,9 @@
 {
   lib,
-  indent,
+  illogiopsLib,
   ...
 } @ attrs: buttonConfig: let
-  inherit (builtins) toString;
-  inherit (lib.trivial) boolToString;
+  inherit (illogiopsLib.strings) indent;
 
   CIDs = import ./../CIDs.nix;
 

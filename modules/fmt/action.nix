@@ -1,7 +1,6 @@
 {
   lib,
-  indent,
-  capitalize,
+  illogiopsLib,
   formatOptionValue,
   fmtObjectAttrs,
   ...
@@ -9,15 +8,12 @@
   # ----- INHERITANCE -----
   inherit
     (builtins)
-    toString
-    attrValues
     attrNames
+    attrValues
     head
-    map
     isString
     ;
-  inherit (lib.strings) toLower;
-  inherit (lib.trivial) boolToString;
+  inherit (illogiopsLib.strings) indent capitalize;
 
   gestureFmt = import ./gesture.nix attrs;
 
@@ -29,17 +25,6 @@
 
   # ----- ACTION TYPES -----
   formatActionTypes = {
-    # keyPress = actionOptions: ''keys: ${formatOptionValue actionOptions.keys};'';
-    # toggleSmartShift = actionOptions: "";
-    # toggleHiresScroll = actionOptions: "";
-    # cycleDPI = actionOptions: ''
-    #   dpis: ${formatOptionValue actionOptions.dpis};
-    #   sensor: ${formatOptionValue actionOptions.sensor};
-    #   '';
-    # changeDPI = actionOptions: ''
-    #   inc: ${formatOptionValue actionOptions.dpis};
-    #   sensor: ${formatOptionValue actionOptions.sensor};
-    #   '';
     keypress = formatKeyValueOptions;
     toggleSmartShift = formatKeyValueOptions;
     toggleHiresScroll = formatKeyValueOptions;
@@ -60,11 +45,6 @@
 
   firstAttrsValue = attrs: head (attrValues attrs);
 
-  optionalStringMap = f: s:
-    if isString s
-    then s
-    else (f s);
-
   # ----- MAIN -----
 
   actionType = capitalize (
@@ -72,26 +52,11 @@
     then actionConfig
     else (firstAttrsValue actionConfig).type
   );
-  # actionType = optionalStringMap (x: (firstAttrsValue x).type) actionConfig;
   actionOptions =
     if isString actionConfig
     then ""
     else "\n  ${(indent 2 (formatActionType (firstAttrsValue actionConfig)))}";
-in
-  # actionOptions = optionalStringMap (x: "\n${(indent 2 (formatActionType (firstAttrsValue x)))}") actionConfig
-  # actionOptions = map (x: ''${toLower x}: $'') (attrNames firstActionConfig.options);
-  # if (builtins.isString actionConfig)
-  # then ''
-  #   {
-  #     type: "${capitalize actionConfig}";
-  #   }
-  # ''
-  # else ''
-  #   {
-  #     type: "${capitalize firstActionConfig.type}";
-  #     ${indent 2 (formatActionType firstActionConfig)}
-  #   }''
-  ''
-    {
-      type: "${actionType}";${actionOptions}
-    }''
+in ''
+  {
+    type: "${actionType}";${actionOptions}
+  }''

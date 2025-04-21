@@ -78,14 +78,6 @@ in
           This is an optional array field that defines the mappings for
           buttons.
         '';
-        # type = lib.types.attrsOf (
-        #   lib.types.submodule (
-        #     import ./button.nix {
-        #       inherit lib;
-        #       config = cfg.devices."${name}".buttons;
-        #     }
-        #   )
-        # );
       };
     };
 

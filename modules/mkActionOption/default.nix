@@ -8,18 +8,15 @@
   # ----- INHERITANCE -----
   inherit (builtins) attrNames;
   inherit (lib) mkOption;
+  inherit (lib.modules) mkForce;
   inherit
     (lib.types)
     attrsOf
-    submodule
-    enum
     either
+    enum
     str
+    submodule
     ;
-  inherit (lib.modules) mkForce;
-
-  # ----- FUNCTIONS -----
-  attrsSubmodule = module: attrsOf (submodule module);
 
   # ----- ACTIONS -----
   # The set of actions that are options
@@ -44,41 +41,30 @@ in
 
             # The sub-module of the selected action type.
             selectedActionSubmodule = submodule (actionSet."${actionType}");
-          in
-            # selectedActionOptions = actionSet."${actionType}".options;
-            {
-              options = (
-                {
-                  # The action type must be one of the available options.
-                  type = mkOption {
-                    type = permittedActions;
-                    description = ''
-                      The type of the action.
+          in {
+            options = {
+              # The action type must be one of the available options.
+              type = mkOption {
+                type = permittedActions;
+                description = ''
+                  The type of the action.
 
-                      A gesture cannot have another gesture as its action.
-                    '';
-                  };
-
-                  # The options for the action must match those of the selected action
-                  # type.
-                  options = mkOption {
-                    type = selectedActionSubmodule;
-                    description = "The options for the action.";
-                  };
-
-                  # "${actionType}helloworld" = mkOption {
-                  #   type = lib.types.str;
-                  #   default = "helloworld";
-                  # };
-                }
-                # Merge the options of the selected action into the base action attrset
-                # // selectedActionOptions
-              );
-
-              config = {
-                type = mkForce actionType;
+                  A gesture cannot have another gesture as its action.
+                '';
               };
-            }
+
+              # The options for the action must match those of the selected action
+              # type.
+              options = mkOption {
+                type = selectedActionSubmodule;
+                description = "The options for the action.";
+              };
+            };
+
+            config = {
+              type = mkForce actionType;
+            };
+          }
         )
       )
     );
